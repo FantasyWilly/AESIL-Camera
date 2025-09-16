@@ -25,7 +25,7 @@ source ~/.bashrc
 
   ### [ XF 系列 ]
 
-  - `官網連結:` [ 先飛科技 ](https://www.allxianfei.com/) - [手用手冊 控制協議 3D圖檔等...]
+  - `官網連結:` [ 先飛科技 ](https://www.allxianfei.com/) - [使用手冊 控制協議 3D圖檔等...]
 
   - ROS2 Running (基礎使用)
 
