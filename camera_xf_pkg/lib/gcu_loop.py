@@ -7,9 +7,6 @@ Author : FantasyWilly
 Email  : bc697522h04@gmail.com  
 SPDX-License-Identifier: Apache-2.0 
 
-版本:
-    • [ROS2 版本] - lib 庫
-
 開發公司:
     • 先飛科技 (XF)
 
@@ -29,7 +26,7 @@ import time
 import threading
 
 # 專案內部模組
-from lib.ros.gcu_controller import GCUController
+from lib.gcu_controller import GCUController
 
 # ------------------------------------ 循環執行程式 ------------------------------------ #
 def loop_in_background(controller: GCUController, stop_event: threading.Event):

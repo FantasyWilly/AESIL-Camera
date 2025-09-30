@@ -27,8 +27,8 @@ import sys
 import pygame
 
 # 專案內部模組
-import camera_command as cm
-from gcu_controller import GCUController
+import lib.camera_command as cm
+from lib.gcu_controller import GCUController
 
 
 # ------------------------------------------------------------------------------------ #

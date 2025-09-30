@@ -7,9 +7,6 @@ Author : FantasyWilly
 Email  : bc697522h04@gmail.com  
 SPDX-License-Identifier: Apache-2.0 
 
-版本:
-    • [ROS2 版本] - lib 庫
-
 開發公司:
     • 先飛科技 (XF)
 
@@ -31,7 +28,7 @@ from std_msgs.msg import Header
 from rclpy.qos import qos_profile_sensor_data
 
 # 專案內部模組
-from camera_msg_pkg.msg import Camera, CameraData
+from camera_msgs_pkg.msg import Camera, CameraData
 
 
 # ------------------------------------------------------------------------------------ #

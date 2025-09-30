@@ -7,9 +7,6 @@ Author : FantasyWilly
 Email  : bc697522h04@gmail.com  
 SPDX-License-Identifier: Apache-2.0 
 
-版本:
-    • [ROS2 版本]
-
 開發公司:
     • 先飛科技 (XF)
 
@@ -32,9 +29,9 @@ import threading
 import rclpy
 
 # 專案內部模組
-import lib.ros.camera_command as cm
-import lib.ros.gcu_loop as gcu_loop
-from lib.ros.gcu_controller import GCUController
+import lib.camera_command as cm
+import lib.gcu_loop as gcu_loop
+from lib.gcu_controller import GCUController
 
 
 # ------------------------------------------------------------------------------------ #

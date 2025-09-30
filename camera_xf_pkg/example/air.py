@@ -7,9 +7,6 @@ Author : FantasyWilly
 Email  : bc697522h04@gmail.com  
 SPDX-License-Identifier: Apache-2.0 
 
-版本:
-    • [一般 Python 版本]
-
 開發公司:
     • 先飛科技 (XF)
 
@@ -34,9 +31,9 @@ import threading
 import rclpy
 
 # 專案內部模組
-from lib.common.gcu_loop import loop_in_background
-from lib.common.gcu_controller import GCUController
-from lib.common.proxy_server import ProxyService
+from lib.gcu_loop import loop_in_background
+from lib.gcu_controller import GCUController
+from lib.proxy_server import ProxyService
 
 
 # ------------------------------------------------------------------------------------ #
@@ -53,6 +50,9 @@ PROXY_LISTEN_PORT = 9999            # 代理服務監聽的埠號
 # 主程式
 # ------------------------------------------------------------------------------------ #
 def main():
+
+    # 初始化 ROS2 
+    rclpy.init()
 
     # 建立 TCP 連線物件 - [GCUController]
     controller = GCUController(DEVICE_IP, DEVICE_PORT)

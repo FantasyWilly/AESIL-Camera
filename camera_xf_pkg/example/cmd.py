@@ -2,13 +2,10 @@
 # -*- coding: utf-8 -*-
 
 """
-File   : cmd_ros2.py
+File   : cmd.py
 Author : FantasyWilly   
 Email  : bc697522h04@gmail.com  
 SPDX-License-Identifier: Apache-2.0 
-
-版本:
-    • [ROS2 版本]
 
 開發公司:
     • 先飛科技 (XF)
@@ -34,9 +31,9 @@ import threading
 import rclpy
 
 # 專案內部模組
-import lib.ros.gcu_loop as gcu_loop
-import lib.ros.camera_command as cm
-from lib.ros.gcu_controller import GCUController
+import lib.gcu_loop as gcu_loop
+import lib.camera_command as cm
+from lib.gcu_controller import GCUController
 
 
 # ------------------------------------------------------------------------------------ #

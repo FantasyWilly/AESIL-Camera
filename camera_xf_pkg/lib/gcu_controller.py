@@ -7,9 +7,6 @@ Author : FantasyWilly
 Email  : bc697522h04@gmail.com  
 SPDX-License-Identifier: Apache-2.0 
 
-版本:
-    • [ROS2 版本] - lib 庫
-
 開發公司:
     • 先飛科技 (XF)
 
@@ -31,9 +28,9 @@ import socket
 import threading
 
 # 專案內部模組
-from lib.ros.gcu_publisher import GCUPublisher
-from lib.ros.camera_protocol import build_packet
-from lib.ros.camera_decoder import decode_gcu_response
+from lib.gcu_publisher import GCUPublisher
+from lib.camera_protocol import build_packet
+from lib.camera_decoder import decode_gcu_response
 
 
 # ------------------------------------------------------------------------------------ #
