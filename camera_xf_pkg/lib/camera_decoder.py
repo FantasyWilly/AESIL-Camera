@@ -57,7 +57,7 @@ def decode_gcu_response(response: bytes) -> dict:
         data['error'] = f'協議頭錯誤: {header1:02X}{header2:02X}'
         return data
 
-    # ------------------------ 2. 解碼相機 (roll, pitch, yaw) ------------------------- #
+    # ----------------------- 2-1. 解碼相機 (roll, pitch, yaw) ------------------------ #
     # 嘗試讀取 roll/pitch/yaw (Byte18~19, 20~21, 22~23)
     roll_bytes  = response[18:20]   # 2 bytes
     pitch_bytes = response[20:22]   # 2 bytes
@@ -71,28 +71,41 @@ def decode_gcu_response(response: bytes) -> dict:
     yaw_raw   = struct.unpack("<H", yaw_bytes)[0]
 
     # 分辨率 0.01
-    roll_deg  = roll_raw  * 0.01
-    pitch_deg = pitch_raw * 0.01
-    yaw_deg   = yaw_raw   * 0.01
+    rollangle  = roll_raw  * 0.01
+    pitchangle = pitch_raw * 0.01
+    yawangle   = yaw_raw   * 0.01
 
     # 添加 進 data 列表
-    data['roll']  = roll_deg
-    data['pitch'] = pitch_deg
-    data['yaw']   = yaw_deg
+    data['rollangle']  = rollangle
+    data['pitchangle'] = pitchangle
+    data['yawangle']   = yawangle
 
-    # -------------------------- 3. 解碼相機 (相機倍率 ratio) --------------------------- #
+    # -------------------------- 2-2. 解碼相機 (targetdist) --------------------------- #
+    # 嘗試讀取 目標測距 (Byte43~46)
+    targetdist_bytes  = response[43:47]   # 4 bytes
+
+    # 無號 32-bit (U32)：struct.unpack('<I') => little-endian 32 位元無號整數
+    targetdist_raw, = struct.unpack('<I', targetdist_bytes)
+
+    # 分辨率 0.1
+    targetdist = targetdist_raw * 0.1
+
+    # 添加 進 data 列表
+    data['targetdist'] = targetdist
+
+    # ----------------------- 2-3. 解碼相機 (相機倍率 ratio) --------------------------- #
     # 嘗試讀取 相機倍率 ratio (Byte59~60)
     zoom_bytes =response[59:61]
 
     # 無號 16-bit (U16): struct.unpack("<H") => littel-endian 16位元無正負數
-    zoom_ratio = struct.unpack("<H", zoom_bytes)[0]
+    zoom_raw = struct.unpack("<H", zoom_bytes)[0]
 
     # 分辨率 0.1
-    zoom_ratio = zoom_ratio * 0.1
+    zoom = zoom_raw * 0.1
 
     # 添加 進 data 列表
-    data['ratio'] = zoom_ratio
+    data['zoom'] = zoom
 
-    # ------------------------- 4. 最終回傳 Data 資料 ---------------------------------- #
+    # ------------------------- 3. 最終回傳 Data 資料 ---------------------------------- #
     # 回傳 data 資料
     return data

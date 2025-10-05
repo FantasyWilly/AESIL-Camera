@@ -37,7 +37,7 @@ from lib.gcu_controller import GCUController
 # ------------------------------------------------------------------------------------ #
 # TCP 連線 <IP:Port> 
 # ------------------------------------------------------------------------------------ #
-DEVICE_IP = "192.168.144.108"
+DEVICE_IP = "192.168.144.121"
 DEVICE_PORT = 2332
 
 
@@ -72,23 +72,32 @@ def xbox_controller_loop(controller, stop_event: threading.Event):
             # 按鍵 - [A, B, X, Y, L, R]    
             if event.type == pygame.JOYBUTTONDOWN:
                 if joystick.get_button(0):
-                    print("A 按鈕按下: 向下")
+                    # print("A 按鈕按下: 向下")
                     cm.down(controller)
                 elif joystick.get_button(1):
-                    print("B 按鈕按下: 拍照")
+                    # print("B 按鈕按下: 拍照")
                     cm.photo(controller)
                 elif joystick.get_button(2):
-                    print("X 按鈕按下: 錄影")
+                    # print("X 按鈕按下: 錄影")
                     cm.video(controller)
                 elif joystick.get_button(3):
-                    print("Y 按鈕按下: 回中")
+                    # print("Y 按鈕按下: 回中")
                     cm.reset(controller)
                 elif joystick.get_button(4):
-                    print("L 按鈕按下: 鎖頭")
+                    # print("L 按鈕按下: 鎖頭")
                     cm.lock(controller)
                 elif joystick.get_button(5):
-                    print("R 按鈕按下: 跟隨")
+                    # print("R 按鈕按下: 跟隨")
                     cm.follow(controller)
+
+            # 按鍵 - [選單, 目錄]  
+            if event.type == pygame.JOYBUTTONDOWN:
+                if joystick.get_button(6):
+                    # print("校準")
+                    cm.calibration(controller)
+                elif joystick.get_button(7):
+                    # print("聚焦")
+                    cm.focus(controller)
 
             # 按鍵 - [上下左右]    
             elif event.type == pygame.JOYHATMOTION:
@@ -96,7 +105,7 @@ def xbox_controller_loop(controller, stop_event: threading.Event):
                 pitch = hat[1] * CONTROL_INCREMENT
                 yaw   = hat[0] * CONTROL_INCREMENT
                 if hat != (0, 0):
-                    print(f"發送雲台控制指令 -> pitch: {pitch}°, yaw: {yaw}°")
+                    # print(f"發送雲台控制指令 -> pitch: {pitch}°, yaw: {yaw}°")
                     cm.control_gimbal(controller, pitch=pitch, yaw=yaw)
 
             # 按鍵 - [右扳機 (RT) - 5], [左扳機 (LT) - 2]
@@ -105,19 +114,19 @@ def xbox_controller_loop(controller, stop_event: threading.Event):
                 if event.axis == 5:
                     rt_value = joystick.get_axis(5)
                     if rt_value > 0.5:
-                        print("RT 按下: zoom_in")
+                        # print("RT 按下: zoom_in")
                         cm.zoom_in(controller)
                     else:
-                        print("RT 釋放: zoom_stop")
+                        # print("RT 釋放: zoom_stop")
                         cm.zoom_stop(controller)
                 
                 elif event.axis == 2:
                     lt_value = joystick.get_axis(2)
                     if lt_value > 0.5:
-                        print("LT 按下: zoom_out")
+                        # print("LT 按下: zoom_out")
                         cm.zoom_out(controller)
                     else:
-                        print("LT 釋放: zoom_stop")
+                        # print("LT 釋放: zoom_stop")
                         cm.zoom_stop(controller)
         time.sleep(0.1)
 

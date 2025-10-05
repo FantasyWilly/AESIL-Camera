@@ -44,10 +44,10 @@ class GCUController:
         3. 發送 控制命令
 
     args:
-        • ip (str)                      - 目標主機 IP
-        • port (int)                    - 目標主機 Port
-        • timeout (float)      [Optional]    - Socket 超時時間      (default: 5s)
-        • ros2_publisher_node  [Optional]    - 傳入 ROS2 發布者節點  (default: None)
+        • ip (str)                          - 目標主機 IP
+        • port (int)                        - 目標主機 Port
+        • timeout (float)      [Optional]   - Socket 超時時間      (default: 5s)
+        • ros2_publisher_node  [Optional]   - 傳入 ROS2 發布者節點  (default: None)
     """
 
     def __init__(
@@ -92,9 +92,9 @@ class GCUController:
         args:
             • command (int)         - 16 進位
             • parameters (bytes)    - 16 進位 
-            • enable_request (bool) - 是否須返回 GCU 數據格式   (default: True)
-            • pitch, yaw (float)    - 控制台角度               (default: None) 
-            • x0, y0, x1, y1 (int)  - 框選方框四角點            (default: None)
+            • enable_request (bool) - 是否須返回 GCU 數據格式   (True)
+            • pitch, yaw (float)    - 控制台角度               (None) 
+            • x0, y0, x1, y1 (int)  - 框選方框四角點            (None)
 
         returns:
             • response (bytes)      - 返回 GCU 數據格式
@@ -122,13 +122,15 @@ class GCUController:
         if 'error' in parsed:
             print("解碼失敗:", parsed['error'])
         else:
-            roll = parsed['roll']
-            pitch = parsed['pitch']
-            yaw = parsed['yaw']
-            ratio = parsed['ratio']
+            rollangle   = parsed['rollangle']
+            pitchangle  = parsed['pitchangle']
+            yawangle    = parsed['yawangle']
+            zoom        = parsed['zoom']
+            targetdist  = parsed['targetdist']
 
             # 傳送資訊至 ROS2
-            self.ros2_publisher_node.publish_camera_data(roll, pitch, yaw, ratio)
+            self.ros2_publisher_node.publish_camera_data(
+                rollangle, pitchangle, yawangle, zoom, targetdist)
 
         return response
 
@@ -160,12 +162,14 @@ class GCUController:
         if 'error' in parsed:
             print("解碼失敗:", parsed['error'])
         else:
-            roll = parsed['roll']
-            pitch = parsed['pitch']
-            yaw = parsed['yaw']
-            ratio = parsed['ratio']
+            rollangle   = parsed['rollangle']
+            pitchangle  = parsed['pitchangle']
+            yawangle    = parsed['yawangle']
+            zoom        = parsed['zoom']
+            targetdist  = parsed['targetdist']
 
             # 傳送資訊至 ROS2
-            self.ros2_publisher_node.publish_camera_data(roll, pitch, yaw,ratio)
+            self.ros2_publisher_node.publish_camera_data(
+                rollangle, pitchangle, yawangle, zoom, targetdist)
 
         return response

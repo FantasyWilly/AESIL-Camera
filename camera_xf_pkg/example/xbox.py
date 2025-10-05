@@ -37,7 +37,7 @@ from lib.gcu_controller import GCUController
 # ------------------------------------------------------------------------------------ #
 # TCP 連線 <IP:Port> 
 # ------------------------------------------------------------------------------------ #
-DEVICE_IP = "192.168.144.108"
+DEVICE_IP = "192.168.144.121"
 DEVICE_PORT = 2332
 
 
@@ -89,6 +89,15 @@ def xbox_controller_loop(controller, stop_event: threading.Event):
                 elif joystick.get_button(5):
                     print("R 按鈕按下: 跟隨")
                     cm.follow(controller)
+
+            # 按鍵 - [選單, 目錄]  
+            if event.type == pygame.JOYBUTTONDOWN:
+                if joystick.get_button(6):
+                    # print("校準")
+                    cm.calibration(controller)
+                elif joystick.get_button(7):
+                    # print("聚焦")
+                    cm.focus(controller)
 
             # 按鍵 - [上下左右]    
             elif event.type == pygame.JOYHATMOTION:

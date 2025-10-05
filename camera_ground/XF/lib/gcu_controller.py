@@ -118,16 +118,18 @@ class GCUController:
         if 'error' in parsed:
             print("解碼失敗:", parsed['error'])
         else:
-            roll = parsed['roll']
-            pitch = parsed['pitch']
-            yaw = parsed['yaw']
-            ratio = parsed['ratio']
+            rollangle   = parsed['rollangle']
+            pitchangle  = parsed['pitchangle']
+            yawangle    = parsed['yawangle']
+            zoom        = parsed['zoom']
+            targetdist  = parsed['targetdist']
             # print(
             #     f"接收 [解碼]:"
-            #     f" roll={roll:.2f},"
-            #     f" pitch={pitch:.2f},"
-            #     f" yaw={yaw:.2f},"
-            #     f" ratio={ratio:.2f}"
+            #     f" roll={rollangle:.2f},"
+            #     f" pitch={pitchangle:.2f},"
+            #     f" yaw={yawangle:.2f},"
+            #     f" ratio={zoom:.1f}"
+            #     f" ratio={targetdist:.1f}"
             # )
 
         return response
@@ -160,16 +162,18 @@ class GCUController:
         if 'error' in parsed:
             print("解碼失敗:", parsed['error'])
         else:
-            roll = parsed['roll']
-            pitch = parsed['pitch']
-            yaw = parsed['yaw']
-            ratio = parsed['ratio']
+            rollangle   = parsed['rollangle']
+            pitchangle  = parsed['pitchangle']
+            yawangle    = parsed['yawangle']
+            zoom        = parsed['zoom']
+            targetdist  = parsed['targetdist']
             # print(
             #     f"接收 [解碼]:"
-            #     f" roll={roll:.2f},"
-            #     f" pitch={pitch:.2f},"
-            #     f" yaw={yaw:.2f},"
-            #     f" ratio={ratio:.2f}"
+            #     f" roll={rollangle:.2f},"
+            #     f" pitch={pitchangle:.2f},"
+            #     f" yaw={yawangle:.2f},"
+            #     f" ratio={zoom:.1f}"
+            #     f" ratio={targetdist:.1f}"
             # )
 
         return response    

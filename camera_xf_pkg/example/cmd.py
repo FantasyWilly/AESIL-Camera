@@ -39,7 +39,7 @@ from lib.gcu_controller import GCUController
 # ------------------------------------------------------------------------------------ #
 # TCP 連線 <IP:Port> 
 # ------------------------------------------------------------------------------------ #
-DEVICE_IP = "192.168.144.108"
+DEVICE_IP = "192.168.144.121"
 DEVICE_PORT = 2332
 
 # ------------------------------------------------------------------------------------ #
@@ -80,7 +80,7 @@ def main():
         while True:
             cmd = input(
                 "請輸入指令 "
-                "(empty/ reset/ photo / video / quit): "
+                "(empty/ reset/ photo / video / quit / down / focus):"
             ).strip().lower()
 
             if cmd == 'empty':
@@ -91,6 +91,10 @@ def main():
                 cm.photo(controller)
             elif cmd == "video":
                 cm.video(controller)
+            elif cmd == "down":
+                cm.down(controller)
+            elif cmd == "focus":
+                cm.focus(controller)
             elif cmd == "quit":
                 print("已退出操作")
                 break

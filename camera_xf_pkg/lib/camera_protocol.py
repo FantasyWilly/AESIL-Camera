@@ -81,7 +81,7 @@ def build_packet(
         sub_frame
     )
 
-    # ------------------------------ Step2. 指令編寫區 --------------------------------- #
+    # --------------------------- Step2. 特殊指令編寫區 -------------------------------- #
     # 無指令(0x00) → 角度控制：roll(5–7)、yaw(7–9)、pitch(9–11)、結尾標誌 0x04
     if command == 0x00 and (pitch is not None or yaw is not None):
         pitch_value = int(pitch * 100)
@@ -93,23 +93,22 @@ def build_packet(
         payload[9:11]   = struct.pack('<h', yaw_value)
         payload[11]     = 0x04
 
-    # 指令 (0x17) 追蹤模式
-    if command == 0x17 and (
-        parameters in (b'\x01\x01', b'\x01\x00')
-        and x0 is not None
-        and y0 is not None
-        and x1 is not None
-        and y1 is not None
-    ):
-        # 將四個坐標統一轉為整數列表
-        int_coords = [int(x0), int(y0), int(x1), int(y1)]
+    # 指令 (0x17) 追蹤模式, (0x1A) 指點平移
+    if command == 0x17:
+        valid_params = (b'\x01\x01', b'\x01\x00')
+    elif command == 0x1A:
+        valid_params = (b'\x01',)
 
+    if valid_params and parameters in valid_params and None not in (x0, y0, x1, y1):
+
+        # 將四個坐標統一轉為整數列表
+        coords = [int(x0), int(y0), int(x1), int(y1)]
+        
         # 為每個整數生成 2 字節小端表示，並保存到列表
         byte_chunks = []
-        for coord in int_coords:
-            chunk = coord.to_bytes(2, byteorder='little')
-            byte_chunks.append(chunk)
-
+        for c in coords:
+            byte_chunks.append(c.to_bytes(2, byteorder='little'))
+        
         # 把原本的 parameters 與所有坐標的 bytes 連接起來
         parameters = parameters + b''.join(byte_chunks)
 

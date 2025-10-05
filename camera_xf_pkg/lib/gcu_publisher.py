@@ -28,7 +28,7 @@ from std_msgs.msg import Header
 from rclpy.qos import qos_profile_sensor_data
 
 # 專案內部模組
-from camera_msgs_pkg.msg import Camera, CameraData
+from camera_msgs_pkg.msg import Camera, CameraData, Laser, LaserData
 
 
 # ------------------------------------------------------------------------------------ #
@@ -47,13 +47,27 @@ class GCUPublisher(Node):
             qos_profile_sensor_data
         )
 
+        # 建立 ROS2 publishers
+        self.publisher_laser = self.create_publisher(
+            Laser, 
+            '/laser_data_pub', 
+            qos_profile_sensor_data
+        )
+
     # -------------------------- 接收 Camera 資料 & 發布至ROS2 ------------------------- #
-    def publish_camera_data(self, roll: float, pitch: float, yaw: float, ratio: float):
+    def publish_camera_data(
+        self, 
+        roll: float, pitch: float, yaw: float, 
+        zoom: float, 
+        targetdist: float
+    ) -> None:
+        
+        # Camera 相關訊息
         camera_data = CameraData()
         camera_data.rollangle = roll
         camera_data.yawangle = yaw
         camera_data.pitchangle = pitch
-        camera_data.zoom_ratio = ratio
+        camera_data.zoom = zoom
         
         camera_msg = Camera()
         camera_msg.header = Header(stamp=self.get_clock().now().to_msg())
@@ -67,4 +81,19 @@ class GCUPublisher(Node):
         #     f"[PITCH]={camera_data.pitchangle:.2f}"
         #     f"[RATIO]={camera_data.zoom_ratio:.2f}"
         # )
+
+        # Laser 雷射測距消息
+        laser_data = LaserData()
+        laser_data.targetdist = targetdist
+
+        laser_msg = Laser()
+        laser_msg.header = Header(stamp=self.get_clock().now().to_msg())
+        laser_msg.data = [laser_data]
+
+        self.publisher_laser.publish(laser_msg)
+        # self.get_logger().info(
+        #     "[發布] Laser 資料: "
+        #     f"[TARGETDIST]={laser_data.targetdist:.1f},"
+        # )
+
 

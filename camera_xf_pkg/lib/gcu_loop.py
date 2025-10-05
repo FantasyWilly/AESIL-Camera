@@ -28,6 +28,7 @@ import threading
 # 專案內部模組
 from lib.gcu_controller import GCUController
 
+
 # ------------------------------------ 循環執行程式 ------------------------------------ #
 def loop_in_background(controller: GCUController, stop_event: threading.Event):
     """
@@ -47,4 +48,4 @@ def loop_in_background(controller: GCUController, stop_event: threading.Event):
         except Exception as e:
             print("無法送出資料", e)
 
-        time.sleep(0.5)
+        time.sleep(0.25)  # 4 Hz
