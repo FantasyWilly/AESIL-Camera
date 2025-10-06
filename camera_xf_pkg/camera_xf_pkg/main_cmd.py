@@ -80,7 +80,7 @@ def main():
         while True:
             cmd = input(
                 "請輸入指令 "
-                "(empty/ reset/ photo / video / quit / down / focus):"
+                "(empty/ reset/ photo / video / follow / down / focus / quit):"
             ).strip().lower()
 
             if cmd == 'empty':
@@ -93,6 +93,8 @@ def main():
                 cm.video(controller)
             elif cmd == "down":
                 cm.down(controller)
+            elif cmd == "follow":
+                cm.follow(controller)
             elif cmd == "focus":
                 cm.focus(controller)
             elif cmd == "quit":
