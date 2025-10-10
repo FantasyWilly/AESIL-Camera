@@ -39,7 +39,7 @@ from lib.gcu_controller import GCUController
 # ------------------------------------------------------------------------------------ #
 # TCP 連線 <IP:Port> 
 # ------------------------------------------------------------------------------------ #
-DEVICE_IP = "192.168.144.121"
+DEVICE_IP = "192.168.168.121"
 DEVICE_PORT = 2332
 
 # ------------------------------------------------------------------------------------ #
@@ -80,7 +80,7 @@ def main():
         while True:
             cmd = input(
                 "請輸入指令 "
-                "(empty/ reset/ photo / video / follow / down / focus / quit):"
+                "(empty/ reset/ photo / video / follow / down / focus / control / quit):"
             ).strip().lower()
 
             if cmd == 'empty':
@@ -97,6 +97,18 @@ def main():
                 cm.follow(controller)
             elif cmd == "focus":
                 cm.focus(controller)
+
+            elif cmd == "control":
+                angles = input("請輸入角度 Pitch & Yaw (以空格分隔, Ex: 5 -3.2):").strip()
+                try:
+                    pitch_str, yaw_str = angles.split()
+                    pitch = float(pitch_str)
+                    yaw   = float(yaw_str)
+                except ValueError:
+                    print("輸入格式錯誤，請輸入兩個數字，用空格隔開。")
+                    continue
+                cm.control_gimbal(controller, pitch, yaw)
+
             elif cmd == "quit":
                 print("已退出操作")
                 break
