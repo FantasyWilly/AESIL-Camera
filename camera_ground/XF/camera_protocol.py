@@ -94,6 +94,7 @@ def build_packet(
         payload[11]     = 0x04
 
     # 指令 (0x17) 追蹤模式, (0x1A) 指點平移
+    valid_params == None
     if command == 0x17:
         valid_params = (b'\x01\x01', b'\x01\x00')
     elif command == 0x1A:
