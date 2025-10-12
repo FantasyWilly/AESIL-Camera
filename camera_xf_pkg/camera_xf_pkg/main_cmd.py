@@ -105,7 +105,7 @@ def main():
                     pitch = float(pitch_str)
                     yaw   = float(yaw_str)
                 except ValueError:
-                    print("輸入格式錯誤，請輸入兩個數字，用空格隔開。")
+                    print("輸入格式錯誤, 請輸入兩個數字, 用空格隔開")
                     continue
                 cm.control_gimbal(controller, pitch, yaw)
 

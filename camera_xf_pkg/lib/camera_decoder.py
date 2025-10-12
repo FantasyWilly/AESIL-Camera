@@ -59,16 +59,14 @@ def decode_gcu_response(response: bytes) -> dict:
 
     # ----------------------- 2-1. 解碼相機 (roll, pitch, yaw) ------------------------ #
     # 嘗試讀取 roll/pitch/yaw (Byte18~19, 20~21, 22~23)
-    roll_bytes  = response[18:20]   # 2 bytes
-    pitch_bytes = response[20:22]   # 2 bytes
-    yaw_bytes   = response[22:24]   # 2 bytes
+    roll_bytes  = response[18:20]   # 2 bytes   (絕對 - ROLL)
+    pitch_bytes = response[20:22]   # 2 bytes   (絕對 - PITCH)
+    yaw_bytes   = response[16:18]   # 2 bytes   (相對 - YAW)
 
     # 有號 16-bit (S16): struct.unpack("<h") => littel-endian 16位元有正負數
     roll_raw  = struct.unpack("<h", roll_bytes)[0]
     pitch_raw = struct.unpack("<h", pitch_bytes)[0]
-
-    # 無號 16-bit (U16): struct.unpack("<H") => littel-endian 16位元無正負數
-    yaw_raw   = struct.unpack("<H", yaw_bytes)[0]
+    yaw_raw   = struct.unpack("<h", yaw_bytes)[0]
 
     # 分辨率 0.01
     rollangle  = roll_raw  * 0.01

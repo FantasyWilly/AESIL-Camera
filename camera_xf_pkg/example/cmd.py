@@ -95,6 +95,18 @@ def main():
                 cm.down(controller)
             elif cmd == "focus":
                 cm.focus(controller)
+
+            elif cmd == "control":
+                angles = input("請輸入角度 Pitch & Yaw (以空格分隔, Ex: 5 -3.2):").strip()
+                try:
+                    pitch_str, yaw_str = angles.split()
+                    pitch = float(pitch_str)
+                    yaw   = float(yaw_str)
+                except ValueError:
+                    print("輸入格式錯誤, 請輸入兩個數字, 用空格隔開")
+                    continue
+                cm.control_gimbal(controller, pitch, yaw)
+
             elif cmd == "quit":
                 print("已退出操作")
                 break
