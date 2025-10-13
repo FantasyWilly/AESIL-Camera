@@ -91,6 +91,24 @@ def xbox_controller_loop(controller: GCUController) -> None:
                     print("R 按鈕按下：跟隨")
                     cm.follow(controller)
 
+            # 按鍵 - [選單, 目錄]  
+            if event.type == pygame.JOYBUTTONDOWN:
+                if joystick.get_button(6):
+                    # print("校準")
+                    cm.calibration(controller)
+                elif joystick.get_button(7):
+                    # print("聚焦")
+                    cm.focus(controller)
+                elif joystick.get_button(11):
+                    laser_enabled = not laser_enabled
+
+                    if laser_enabled:
+                        cm.laser_on(controller)
+                        # print("Laser ON")
+                    else:
+                        cm.laser_off(controller)
+                        # print("Laser OFF")
+
             # 按鍵 - [上下左右]   
             elif event.type == pygame.JOYHATMOTION:
                 hat = joystick.get_hat(0)

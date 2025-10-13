@@ -22,7 +22,7 @@ SPDX-License-Identifier: Apache-2.0
 # Imports
 # ------------------------------------------------------------------------------------ #
 # 專案內部模組
-from gcu_controller import GCUController
+from lib.gcu_controller import GCUController
 
 
 # ------------------------------------------------------------------------------------ #
@@ -118,6 +118,53 @@ def down(controller: GCUController) -> None:
     except Exception as e:
         print("[down] 發送指令時出現錯誤:", e)
 
+# ----------------------------- (track) 跟蹤模式 - [開 & 關] --------------------------- #
+def track_in(controller: GCUController, x0: int, y0: int, x1: int, y1: int) -> None:
+    print(f"[INFO] : [track_in] 進入跟蹤模式")
+    try:
+        controller.send_command(
+            command=0x17,
+            parameters=b'\x01\x01',
+            enable_request=True,
+            x0=x0,
+            y0=y0,
+            x1=x1,
+            y1=y1
+        )
+    except Exception as e:
+        print("[track_in] 發送指令時出現錯誤:", e)
+
+def track_out(controller: GCUController, x0: int, y0: int, x1: int, y1: int) -> None:
+    print(f"[INFO] : [track_out] 退出跟蹤模式")
+    try:
+        controller.send_command(
+            command=0x17,
+            parameters=b'\x01\x00',
+            enable_request=True,
+            x0=x0,
+            y0=y0,
+            x1=x1,
+            y1=y1
+        )
+    except Exception as e:
+        print("[track_out] 發送指令時出現錯誤:", e)
+
+# ------------------------------ (point_control) 指點平移 ----------------------------- #
+def point_controll(controller: GCUController, x0: int, y0: int, x1: int, y1: int) -> None:
+    print(f"發送 [指令] : [point_control] - 控制畫面向")
+    try:
+        controller.send_command(
+            command=0x1A,
+            parameters=b'\x01',
+            enable_request=True,
+            x0=x0,
+            y0=y0,
+            x1=x1,
+            y1=y1
+        )
+    except Exception as e:
+        print("[track_in] 發送指令時出現錯誤:", e)
+
 # --------------------------------- (photo) 拍照 ------------------------------------- #
 def photo(controller: GCUController) -> None:
     print("發送 [指令] : [photo] - 拍照")
@@ -191,40 +238,8 @@ def focus(controller: GCUController) -> None:
     except Exception as e:
         print("[focus] 發送指令時出現錯誤:", e)
 
-# ------------------------------ (track_in) 進入跟蹤模式 ------------------------------- #
-def track_in(controller: GCUController, x0: int, y0: int, x1: int, y1: int) -> None:
-    print(f"[INFO] : [track_in] 進入跟蹤模式")
-    try:
-        controller.send_command(
-            command=0x17,
-            parameters=b'\x01\x01',
-            enable_request=True,
-            x0=x0,
-            y0=y0,
-            x1=x1,
-            y1=y1
-        )
-    except Exception as e:
-        print("[track_in] 發送指令時出現錯誤:", e)
-
-# ------------------------------ (track_out) 退出跟蹤模式 ------------------------------ #
-def track_out(controller: GCUController, x0: int, y0: int, x1: int, y1: int) -> None:
-    print(f"[INFO] : [track_out] 退出跟蹤模式")
-    try:
-        controller.send_command(
-            command=0x17,
-            parameters=b'\x01\x00',
-            enable_request=True,
-            x0=x0,
-            y0=y0,
-            x1=x1,
-            y1=y1
-        )
-    except Exception as e:
-        print("[track_out] 發送指令時出現錯誤:", e)
-
 # ------------------------------ (OSD) OSD畫面 - [開 & 關] ---------------------------- #
-def OSD_On(controller: GCUController) -> None:
+def osd_on(controller: GCUController) -> None:
     print("發送 [指令] : [OSD - On] - OSD開啟")
     try:
         controller.send_command(
@@ -235,7 +250,7 @@ def OSD_On(controller: GCUController) -> None:
     except Exception as e:
         print("[focus] 發送指令時出現錯誤:", e)
 
-def OSD_Off(controller: GCUController) -> None:
+def osd_off(controller: GCUController) -> None:
     print("發送 [指令] : [OSD - Off] - OSD關閉")
     try:
         controller.send_command(
@@ -247,7 +262,7 @@ def OSD_Off(controller: GCUController) -> None:
         print("[focus] 發送指令時出現錯誤:", e)
 
 # ----------------------------- (Laser) 雷射測距 - [開 & 關] --------------------------- #
-def Laser_On(controller: GCUController) -> None:
+def laser_on(controller: GCUController) -> None:
     print("發送 [指令] : [Laser - On] - 測距開啟")
     try:
         controller.send_command(
@@ -258,7 +273,7 @@ def Laser_On(controller: GCUController) -> None:
     except Exception as e:
         print("[focus] 發送指令時出現錯誤:", e)
 
-def Laser_Off(controller: GCUController) -> None:
+def laser_off(controller: GCUController) -> None:
     print("發送 [指令] : [Laser - Off] - 測距關閉")
     try:
         controller.send_command(
