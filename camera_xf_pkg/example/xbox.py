@@ -98,6 +98,15 @@ def xbox_controller_loop(controller, stop_event: threading.Event):
                 elif joystick.get_button(7):
                     # print("聚焦")
                     cm.focus(controller)
+                elif joystick.get_button(11):
+                    laser_enabled = not laser_enabled
+
+                    if laser_enabled:
+                        cm.laser_on(controller)
+                        # print("Laser ON")
+                    else:
+                        cm.laser_off(controller)
+                        # print("Laser OFF")
 
             # 按鍵 - [上下左右]    
             elif event.type == pygame.JOYHATMOTION:
