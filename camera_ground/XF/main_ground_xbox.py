@@ -62,6 +62,9 @@ def xbox_controller_loop(controller: GCUController) -> None:
     joystick.init()
     print("Xbox 控制器已啟動")
 
+    # 初始化 Laser 開關旗標
+    laser_enabled = False
+
     while True:
         for event in pygame.event.get():
 
