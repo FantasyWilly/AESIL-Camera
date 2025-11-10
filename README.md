@@ -41,18 +41,22 @@ source ~/.bashrc
     
     ---
 
-  - ROS2 Running (進階使用) ⚠️ 記得修改檔案的 `Server` IP, Port 且 在同網域底下 & 目前採用 Xbox 搖桿控制
+  - `補充:` 發送端 須下載 `AESIL-CameraExtra` 功能包 --- [跳轉連結](https://github.com/FantasyWilly/AESIL-CameraExtra)
+
+  - ⚠️ 記得修改 發送端 檔案連接的 `Server` IP, Port 且 在同網域底下
 
     ### 載具端
     ```bash
-    ros2 run camera_xf_pkg main_air               # 接收控制指令 - [監聽端]
+    # 接收控制指令 - [監聽端]
+    ros2 run camera_xf_pkg main_air              
     ```
 
     ----
 
-    ### 電腦端
+    ### 發送端
     ```bash
-    python3 camera_ground/XF/main_ground_xbox.py  # 發送控制指令 - [發送端 (Xbox連接控制)]
+    # 發送控制指令 - [發送端 (Xbox連接控制)]
+    python3 ~/<你的路徑>/AESIL-CameraExtra/camera_ground/XF/main_ground_xbox.py  
     ```
 
   ---
