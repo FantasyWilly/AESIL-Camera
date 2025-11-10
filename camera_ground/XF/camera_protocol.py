@@ -33,7 +33,8 @@ def build_packet(
     parameters: bytes = None,
     enable_request: bool = None,
     pitch: float = None, yaw: float = None,
-    x0: int = None, y0: int = None, x1: int = None, y1: int = None, 
+    x0: int = None, y0: int = None, x1: int = None, y1: int = None,
+    width: int = None, height: int = None,
 ) -> bytes:
     
     """
@@ -46,6 +47,9 @@ def build_packet(
         • command (int)         - 指令代碼 (0x01, 0x20, ...)
         • parameters (bytes)    - 指令的參數 (default `None`)
         • enable_request (bool) - 是否需要啟用 GCU 返回數據 (default `True`)
+        • pitch, yaw (float)    - 角度值 (default `None`)
+        • x0, y0, x1, y1 (int)  - 左上 & 右下點 (default `None`)
+        • width, height (int)   - 影像畫素 (default `None`)
 
     returns:
         • packet (bytes)        - 組好的完整封包 (包含 2 byte CRC)
@@ -101,6 +105,12 @@ def build_packet(
         valid_params = (b'\x01',)
 
     if valid_params and parameters in valid_params and None not in (x0, y0, x1, y1):
+
+        # 解析率轉換 (左上[0,0], 右下[10000,10000])
+        x0 = int(x0 / width  * 10000)
+        y0 = int(y0 / height * 10000)
+        x1 = int(x1 / width  * 10000)
+        y1 = int(y1 / height * 10000)
 
         # 將四個坐標統一轉為整數列表
         coords = [int(x0), int(y0), int(x1), int(y1)]

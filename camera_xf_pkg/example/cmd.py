@@ -27,6 +27,9 @@ SPDX-License-Identifier: Apache-2.0
 # 標準庫
 import threading
 
+# 第三方套件
+import cv2
+
 # ROS2
 import rclpy
 
@@ -37,10 +40,17 @@ from lib.gcu_controller import GCUController
 
 
 # ------------------------------------------------------------------------------------ #
-# TCP 連線 <IP:Port> 
+# TCP 連線 <IP:Port>
 # ------------------------------------------------------------------------------------ #
-DEVICE_IP = "192.168.144.121"
+DEVICE_IP   = "192.168.168.121"
 DEVICE_PORT = 2332
+
+
+# ------------------------------------------------------------------------------------ #
+# 影像串流 <CAMERA_URL>
+# ------------------------------------------------------------------------------------ #
+CAMERA_URL  = 'rtsp://user:user@192.168.168.108:554/cam/realmonitor?channel=1&subtype=0'
+
 
 # ------------------------------------------------------------------------------------ #
 # 主程式
@@ -50,15 +60,27 @@ def main():
     - 說明 [main]
         1. 創建 [GCUController] 並 連線至 GCU控制盒
         2. 初始化 ROS2
-        3. 連續發送空命令 -> 接收返回資訊
-        4. CMD 輸入指令控制
+        3. 動態獲取 畫面像素大小
+        4. 連續發送空命令 -> 接收返回資訊
+        5. 讓使用者輸入指令
     """
+
+    # 動態獲取 CAMERA_URL 串流影像大小
+    cap = cv2.VideoCapture(CAMERA_URL)
+    if not cap.isOpened():
+        print(f"[CAMERA_URL] 無法連接到串流: {CAMERA_URL}")
+        width = height = 0
+    else:
+        width   = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height  = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        cap.release()
+        print(f"[CAMERA_URL] 畫面大小: {width}x{height}")
 
     # 初始化 ROS2 
     rclpy.init()
 
     # 建立 TCP 連線物件 - [GCUController]
-    controller = GCUController(DEVICE_IP, DEVICE_PORT)
+    controller = GCUController(DEVICE_IP, DEVICE_PORT, width, height)
 
     try:
         # 1. TCP 連線
@@ -80,7 +102,7 @@ def main():
         while True:
             cmd = input(
                 "請輸入指令 "
-                "(empty/ reset/ photo / video / quit / down / focus):"
+                "(empty/ reset/ photo / video / follow / down / focus / control / quit):"
             ).strip().lower()
 
             if cmd == 'empty':
@@ -93,9 +115,10 @@ def main():
                 cm.video(controller)
             elif cmd == "down":
                 cm.down(controller)
+            elif cmd == "follow":
+                cm.follow(controller)
             elif cmd == "focus":
                 cm.focus(controller)
-
             elif cmd == "control":
                 angles = input("請輸入角度 Pitch & Yaw (以空格分隔, Ex: 5 -3.2):").strip()
                 try:

@@ -27,6 +27,9 @@ SPDX-License-Identifier: Apache-2.0
 import time
 import threading
 
+# 第三方套件
+import cv2
+
 # ROS2
 import rclpy
 
@@ -47,15 +50,32 @@ PROXY_LISTEN_PORT = 9999            # 代理服務監聽的埠號
 
 
 # ------------------------------------------------------------------------------------ #
+# 影像串流 <CAMERA_URL>
+# ------------------------------------------------------------------------------------ #
+CAMERA_URL  = 'rtsp://user:user@192.168.168.108:554/cam/realmonitor?channel=1&subtype=0'
+
+
+# ------------------------------------------------------------------------------------ #
 # 主程式
 # ------------------------------------------------------------------------------------ #
 def main():
+
+    # 動態獲取 CAMERA_URL 串流影像大小
+    cap = cv2.VideoCapture(CAMERA_URL)
+    if not cap.isOpened():
+        print(f"[CAMERA_URL] 無法連接到串流: {CAMERA_URL}")
+        width = height = 0
+    else:
+        width   = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height  = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        cap.release()
+        print(f"[CAMERA_URL] 畫面大小: {width}x{height}")
 
     # 初始化 ROS2 
     rclpy.init()
 
     # 建立 TCP 連線物件 - [GCUController]
-    controller = GCUController(DEVICE_IP, DEVICE_PORT)
+    controller = GCUController(DEVICE_IP, DEVICE_PORT, width, height)
 
     # 1. TCP 連線
     controller.connect()

@@ -25,6 +25,9 @@ import time
 import pygame
 import threading
 
+# 第三方套件
+import cv2
+
 # ROS2
 import rclpy
 
@@ -37,8 +40,14 @@ from lib.gcu_controller import GCUController
 # ------------------------------------------------------------------------------------ #
 # TCP 連線 <IP:Port> 
 # ------------------------------------------------------------------------------------ #
-DEVICE_IP = "192.168.144.121"
+DEVICE_IP = "192.168.168.121"
 DEVICE_PORT = 2332
+
+
+# ------------------------------------------------------------------------------------ #
+# 影像串流 <CAMERA_URL>
+# ------------------------------------------------------------------------------------ #
+CAMERA_URL  = 'rtsp://user:user@192.168.168.108:554/cam/realmonitor?channel=1&subtype=0'
 
 
 # ------------------------------------------------------------------------------------ #
@@ -65,8 +74,6 @@ def xbox_controller_loop(controller, stop_event: threading.Event):
     joystick.init()
     print("Xbox 控制器已啟動")
 
-    # 初始化 Laser 開關旗標
-    laser_enabled = False
 
     while True:
         for event in pygame.event.get():
@@ -74,22 +81,22 @@ def xbox_controller_loop(controller, stop_event: threading.Event):
             # 按鍵 - [A, B, X, Y, L, R]    
             if event.type == pygame.JOYBUTTONDOWN:
                 if joystick.get_button(0):
-                    print("A 按鈕按下: 向下")
+                    # print("A 按鈕按下: 向下")
                     cm.down(controller)
                 elif joystick.get_button(1):
-                    print("B 按鈕按下: 拍照")
+                    # print("B 按鈕按下: 拍照")
                     cm.photo(controller)
                 elif joystick.get_button(2):
-                    print("X 按鈕按下: 錄影")
+                    # print("X 按鈕按下: 錄影")
                     cm.video(controller)
                 elif joystick.get_button(3):
-                    print("Y 按鈕按下: 回中")
+                    # print("Y 按鈕按下: 回中")
                     cm.reset(controller)
                 elif joystick.get_button(4):
-                    print("L 按鈕按下: 鎖頭")
+                    # print("L 按鈕按下: 鎖頭")
                     cm.lock(controller)
                 elif joystick.get_button(5):
-                    print("R 按鈕按下: 跟隨")
+                    # print("R 按鈕按下: 跟隨")
                     cm.follow(controller)
 
             # 按鍵 - [選單, 目錄]  
@@ -116,7 +123,7 @@ def xbox_controller_loop(controller, stop_event: threading.Event):
                 pitch = hat[1] * CONTROL_INCREMENT
                 yaw   = hat[0] * CONTROL_INCREMENT
                 if hat != (0, 0):
-                    print(f"發送雲台控制指令 -> pitch: {pitch}°, yaw: {yaw}°")
+                    # print(f"發送雲台控制指令 -> pitch: {pitch}°, yaw: {yaw}°")
                     cm.control_gimbal(controller, pitch=pitch, yaw=yaw)
 
             # 按鍵 - [右扳機 (RT) - 5], [左扳機 (LT) - 2]
@@ -125,19 +132,19 @@ def xbox_controller_loop(controller, stop_event: threading.Event):
                 if event.axis == 5:
                     rt_value = joystick.get_axis(5)
                     if rt_value > 0.5:
-                        print("RT 按下: zoom_in")
+                        # print("RT 按下: zoom_in")
                         cm.zoom_in(controller)
                     else:
-                        print("RT 釋放: zoom_stop")
+                        # print("RT 釋放: zoom_stop")
                         cm.zoom_stop(controller)
                 
                 elif event.axis == 2:
                     lt_value = joystick.get_axis(2)
                     if lt_value > 0.5:
-                        print("LT 按下: zoom_out")
+                        # print("LT 按下: zoom_out")
                         cm.zoom_out(controller)
                     else:
-                        print("LT 釋放: zoom_stop")
+                        # print("LT 釋放: zoom_stop")
                         cm.zoom_stop(controller)
         time.sleep(0.1)
 
@@ -150,15 +157,27 @@ def main():
     - 說明 [main]
         1. 創建 [GCUController] 並 連線至 GCU控制盒
         2. 初始化 ROS2
-        3. 連續發送空命令 -> 接收返回資訊
-        4. Xbox 搖桿控制
+        3. 動態獲取 畫面像素大小
+        4. 連續發送空命令 -> 接收返回資訊
+        5. Xbox 搖桿控制
     """
+
+    # 動態獲取 CAMERA_URL 串流影像大小
+    cap = cv2.VideoCapture(CAMERA_URL)
+    if not cap.isOpened():
+        print(f"[CAMERA_URL] 無法連接到串流: {CAMERA_URL}")
+        width = height = 0
+    else:
+        width   = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height  = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        cap.release()
+        print(f"[CAMERA_URL] 畫面大小: {width}x{height}")
 
     # 初始化 ROS2 
     rclpy.init()
 
     # 建立 TCP 連線物件 - [GCUController]
-    controller = GCUController(DEVICE_IP, DEVICE_PORT)
+    controller = GCUController(DEVICE_IP, DEVICE_PORT, width, height)
 
     try:
         # 1. TCP 連線

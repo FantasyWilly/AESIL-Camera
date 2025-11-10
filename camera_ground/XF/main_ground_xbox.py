@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-File   : main_ground.py
+File   : main_ground_xbox.py
 Author : FantasyWilly   
 Email  : bc697522h04@gmail.com  
 SPDX-License-Identifier: Apache-2.0 
@@ -26,6 +26,9 @@ import time
 import sys
 import pygame
 
+# 第三方套件
+import cv2
+
 # 專案內部模組
 import camera_command as cm
 from gcu_controller import GCUController
@@ -36,6 +39,12 @@ from gcu_controller import GCUController
 # ------------------------------------------------------------------------------------ #
 DEVICE_IP = "192.168.168.111"     # Server IP
 DEVICE_PORT = 9999                # Server Port 
+
+
+# ------------------------------------------------------------------------------------ #
+# 影像串流 <CAMERA_URL>
+# ------------------------------------------------------------------------------------ #
+CAMERA_URL  = 'rtsp://user:user@192.168.168.108:554/cam/realmonitor?channel=1&subtype=0'
 
 
 # ------------------------------------------------------------------------------------ #
@@ -146,6 +155,23 @@ def xbox_controller_loop(controller: GCUController) -> None:
 # 主程式
 # ------------------------------------------------------------------------------------ #
 def main() -> None:
+    """
+    - 說明 [main]
+        1. 創建 [GCUController] 並 連線至 GCU控制盒
+        2. 動態獲取 畫面像素大小
+        3. Xbox 搖桿控制
+    """
+
+    # 動態獲取 CAMERA_URL 串流影像大小
+    cap = cv2.VideoCapture(CAMERA_URL)
+    if not cap.isOpened():
+        print(f"[CAMERA_URL] 無法連接到串流: {CAMERA_URL}")
+        width = height = 0
+    else:
+        width   = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height  = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        cap.release()
+        print(f"[CAMERA_URL] 畫面大小: {width}x{height}")
 
     # 建立 TCP 連線物件 - [GCUController]
     controller = GCUController(DEVICE_IP, DEVICE_PORT)

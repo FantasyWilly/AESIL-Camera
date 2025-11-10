@@ -46,19 +46,26 @@ class GCUController:
     args:
         • ip (str)        - 目標主機 IP
         • port (int)      - 目標主機 Port
+        • width (int)     - 畫面像素 (寬)
+        • height (int)    - 畫面像素 (高)
         • timeout (float) - Socket 超時時間 (default: 5s)
     """
 
     def __init__(
-        self, ip: str, 
-        port: int, 
+        self, 
+        ip: str, 
+        port: int,
+        width:int,
+        height:int,  
         timeout: float = 5.0
     ) -> None:
 
         # 接收參數
-        self.ip = ip
-        self.port = port
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.ip     = ip
+        self.port   = port
+        self.width  = width
+        self.height = height
+        self.sock   = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.settimeout(timeout)
 
         # 保護整個 send/recv 流程
@@ -104,7 +111,8 @@ class GCUController:
                 parameters,
                 enable_request,
                 pitch=pitch, yaw=yaw,
-                x0=x0, y0=y0, x1=x1, y1=y1
+                x0=x0, y0=y0, x1=x1, y1=y1,
+                width=self.width, height=self.height
             )
             # print("發送 [數據包] :", packet.hex().upper())
             self.sock.sendall(packet)
