@@ -11,9 +11,9 @@ SPDX-License-Identifier: Apache-2.0
     • 先飛科技 (XF)
 
 功能總覽:
-    • 啟動 TCP 代理服務，監聽地面端連線
-    • 收到命令後，經由持久化的 GCUController
-      轉發封包至相機，並將相機回應再傳回地面端
+    • 啟動 TCP 代理服務, 監聽地面端連線
+    • 收到命令後, 經由持久化的 GCUController
+      轉發封包至相機, 並將相機回應再傳回地面端
 
 遵循:
     • Google Python Style Guide (含區段標題)
@@ -94,7 +94,7 @@ class ProxyService:
         self._srv.controller = controller
 
     def serve_forever(self):
-        """啟動伺服器主迴圈，阻塞執行直到 shutdown() 被呼叫"""
+        """啟動伺服器主迴圈, 阻塞執行直到 shutdown() 被呼叫"""
         self._srv.serve_forever()
 
     def shutdown(self):
