@@ -43,14 +43,14 @@ class GCUPublisher(Node):
         # 建立 ROS2 publishers
         self.publisher_camera = self.create_publisher(
             Camera, 
-            '/camera_data_pub', 
+            '/camera_data', 
             qos_profile_sensor_data
         )
 
         # 建立 ROS2 publishers
         self.publisher_laser = self.create_publisher(
             Laser, 
-            '/laser_data_pub', 
+            '/laser_data', 
             qos_profile_sensor_data
         )
 
