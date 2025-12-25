@@ -22,6 +22,9 @@ SPDX-License-Identifier: Apache-2.0
 # ------------------------------------------------------------------------------------ #
 # Import
 # ------------------------------------------------------------------------------------ #
+# 標準庫
+from dataclasses import dataclass
+
 # ROS2
 from rclpy.node import Node
 from std_msgs.msg import Header
@@ -32,25 +35,81 @@ from camera_msgs_pkg.msg import Camera, CameraData, Laser, LaserData
 
 
 # ------------------------------------------------------------------------------------ #
+# 常數 定義
+# ------------------------------------------------------------------------------------ #
+NODE_NAME = "camera_node"     # Node  節點名稱
+
+
+# ------------------------------------------------------------------------------------ #
+# Config dataclass (讀取參數)
+# ------------------------------------------------------------------------------------ #
+@dataclass
+class CameraConfig:
+    # 參數 (target.yaml)
+    topic_prefix: str
+    camera_topic: str
+    laser_topic: str
+
+    @classmethod
+    def from_node(cls, node: Node) -> "CameraConfig":
+        # 宣告參數
+        node.declare_parameter("topic_prefix", "")
+        node.declare_parameter("camera_topic", "/camera_data")
+        node.declare_parameter("laser_topic", "/laser_data")
+
+        # 讀取參數
+        topic_prefix                = node.get_parameter("topic_prefix").value
+        camera_suffix               = node.get_parameter("camera_topic").value
+        laser_suffix                = node.get_parameter("laser_topic").value
+
+        # 組合 其它 Topic 資訊 (前綴 + 話題名稱)
+        def resolve_topic(prefix: str, suffix: str) -> str:
+            p = prefix.rstrip("/")
+            s = suffix.lstrip("/")
+            return f"{p}/{s}"
+        
+        camera_topic            = resolve_topic(topic_prefix, camera_suffix)
+        laser_topic             = resolve_topic(topic_prefix, laser_suffix)
+
+        cfg = cls(
+            topic_prefix                = topic_prefix,
+            camera_topic                = camera_topic,
+            laser_topic                 = laser_topic,
+        )
+
+        log = node.get_logger().info
+        log(f"[YAML]: target.yaml")
+        log(f"[Param] topic_prefix              : {cfg.topic_prefix}")
+        log(f"[Param] camera_topic              : {cfg.camera_topic}")
+        log(f"[Param] laser_topic               : {cfg.laser_topic}")
+        log("------------------------------------------------------")
+
+        return cfg
+
+# ------------------------------------------------------------------------------------ #
 # [CUPublisher] 初始化[Node], 宣告參數, 發布相機回傳資訊
 # ------------------------------------------------------------------------------------ #
 class GCUPublisher(Node):
     def __init__(self):
-        
+        super().__init__(NODE_NAME)
+
         # 初始化 Node 節點
-        super().__init__('gcu_publisher_node')
+        self.get_logger().info(f"🔴 [啟動]: {NODE_NAME} 節點")
+        self.get_logger().info("------------------------------------------------------")
+
+        self.cfg = CameraConfig.from_node(self)
 
         # 建立 ROS2 publishers
         self.publisher_camera = self.create_publisher(
             Camera, 
-            '/camera_data', 
+            self.cfg.camera_topic, 
             qos_profile_sensor_data
         )
 
         # 建立 ROS2 publishers
         self.publisher_laser = self.create_publisher(
             Laser, 
-            '/laser_data', 
+            self.cfg.laser_topic, 
             qos_profile_sensor_data
         )
 

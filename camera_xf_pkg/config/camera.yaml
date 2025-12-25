@@ -1,0 +1,11 @@
+# camera.yaml
+camera_node:
+  ros__parameters:
+    # 話題前綴
+    topic_prefix: ""
+
+    # [Pub] - 雲台 & 相機資訊
+    camera_topic: "/camera_data"
+
+    # [Pub] - 雷射測距資訊
+    laser_topic: "/laser_data"
