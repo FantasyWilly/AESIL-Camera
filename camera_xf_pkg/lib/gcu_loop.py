@@ -25,6 +25,9 @@ SPDX-License-Identifier: Apache-2.0
 import time
 import threading
 
+# ROS2
+import rclpy
+
 # 專案內部模組
 from lib.gcu_controller import GCUController
 
@@ -33,19 +36,27 @@ from lib.gcu_controller import GCUController
 def loop_in_background(controller: GCUController, stop_event: threading.Event):
     """
     - 說明 [loop_in_background]
-        1. 後台執行緒函式 不斷查詢雲台姿態 (roll/pitch/yaw)
+        1. 後台執行緒函式，不斷送出維持連線的命令
         2. 當 stop_event 被 set 時 -> 跳出迴圈結束
-
-    args:
-        • time.sleep (float, [Optional]) - 多少秒執行一次 (預設0.5s)
     """
     while not stop_event.is_set():
+        if not rclpy.ok():
+            print("[LOOP] rclpy 已關閉，背景迴圈退出")
+            break
+
         try:
             controller.loop_send_command(
                 command=0x00,
-                parameters=b'',
+                parameters=b"",
             )
         except Exception as e:
-            print("無法送出資料", e)
+            if stop_event.is_set() or not rclpy.ok():
+                print("[LOOP] 偵測到關閉狀態，背景執行緒結束")
+                break
+
+            print(f"[LOOP ERROR] 無法送出資料: {e}")
+            time.sleep(0.2)
 
         time.sleep(0.25)  # 4 Hz
+
+    print("[LOOP] 背景執行緒已結束")
