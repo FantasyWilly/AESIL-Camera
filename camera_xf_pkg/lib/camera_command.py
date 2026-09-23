@@ -261,6 +261,29 @@ def osd_off(controller: GCUController) -> None:
     except Exception as e:
         print("[focus] 發送指令時出現錯誤:", e)
 
+# ------------------------------- (AI) 目標辨識 - [開 & 關] ----------------------------- #
+def ai_on(controller: GCUController) -> None:
+    print("發送 [指令] : [AI - ON] - 目標辨識開啟")
+    try:
+        controller.send_command(
+            command=0x75,
+            parameters=b'\x01',
+            enable_request=True
+        )
+    except Exception as e:
+        print("[focus] 發送指令時出現錯誤:", e)
+
+def ai_off(controller: GCUController) -> None:
+    print("發送 [指令] : [AI - OFF] - 目標辨識關閉")
+    try:
+        controller.send_command(
+            command=0x75,
+            parameters=b'\x00',
+            enable_request=True
+        )
+    except Exception as e:
+        print("[focus] 發送指令時出現錯誤:", e)
+
 # ----------------------------- (Laser) 雷射測距 - [開 & 關] --------------------------- #
 def laser_on(controller: GCUController) -> None:
     print("發送 [指令] : [Laser - On] - 測距開啟")

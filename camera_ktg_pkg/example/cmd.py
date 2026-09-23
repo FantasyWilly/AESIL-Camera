@@ -8,7 +8,7 @@ Email  : bc697522h04@gmail.com
 SPDX-License-Identifier: Apache-2.0 
 
 開發公司:
-    • 先飛科技 (XF)
+    • 田屋科技 (XF)
 
 功能總覽:
     • CMD 鍵盤輸入控制
@@ -34,22 +34,22 @@ import cv2
 import rclpy
 
 # 專案內部模組
-import lib.gcu_loop as gcu_loop
-import lib.camera_command as cm
-from lib.gcu_controller import GCUController
+import camera_ktg_pkg.lib.ktg_camera_command as cm
+import camera_ktg_pkg.lib.ktg_camera_loop_command as loop_cm
+from camera_ktg_pkg.lib.ktg_camera_communication import CommunicationController
 
 
 # ------------------------------------------------------------------------------------ #
 # TCP 連線 <IP:Port>
 # ------------------------------------------------------------------------------------ #
-DEVICE_IP   = "192.168.144.122"
-DEVICE_PORT = 2332
+DEVICE_IP   = "192.168.144.200"
+DEVICE_PORT = 2000
 
 
 # ------------------------------------------------------------------------------------ #
 # 影像串流 <CAMERA_URL>
 # ------------------------------------------------------------------------------------ #
-CAMERA_URL  = 'rtsp://192.168.144.109/554'
+CAMERA_URL  = 'rtsp://admin:53373957@192.168.144.108:554/cam/realmonitor?channel=1&subtype=0'
 
 
 # ------------------------------------------------------------------------------------ #
@@ -80,7 +80,7 @@ def main():
     rclpy.init()
 
     # 建立 TCP 連線物件 - [GCUController]
-    controller = GCUController(DEVICE_IP, DEVICE_PORT, width, height)
+    controller = CommunicationController(DEVICE_IP, DEVICE_PORT, width, height)
 
     try:
         # 1. TCP 連線
@@ -91,7 +91,7 @@ def main():
 
         # 2-2. 開啟 [LOOP] 背景線程, 持續發送空命令
         loop_thread = threading.Thread(
-            target=gcu_loop.loop_in_background,
+            target=loop_cm.loop_in_background,
             args=(controller, stop_event),
             daemon=True
         )
@@ -102,31 +102,19 @@ def main():
         while True:
             cmd = input(
                 "請輸入指令 "
-                "(empty/ reset/ photo / video / follow / down / focus / control / osd_on / osd_off / ai_on / ai_off / quit):"
+                "(reset/ photo / video / down / follow / control / quit):"
             ).strip().lower()
 
-            if cmd == 'empty':
-                cm.empty(controller)
-            elif cmd == 'reset':
-                cm.reset(controller)
+            if cmd == 'reset':
+                cm.Command.Netural_command(controller)
             elif cmd == "photo":
-                cm.photo(controller)
+                cm.Command.Photo_command(controller)
             elif cmd == "video":
-                cm.video(controller)
+                cm.Command.Video_command(controller)
             elif cmd == "down":
-                cm.down(controller)
+                cm.Command.Down_command(controller)
             elif cmd == "follow":
-                cm.follow(controller)
-            elif cmd == "focus":
-                cm.focus(controller)
-            elif cmd == "osd_on":
-                cm.osd_on(controller)
-            elif cmd == "osd_off":
-                cm.osd_off(controller)
-            elif cmd == "ai_on":
-                cm.ai_on(controller)
-            elif cmd == "ai_off":
-                cm.ai_off(controller)
+                cm.Command.FollowHeader_command(controller)
             elif cmd == "control":
                 angles = input("請輸入角度 Pitch & Yaw (以空格分隔, Ex: 5 -3.2):").strip()
                 try:
@@ -136,7 +124,7 @@ def main():
                 except ValueError:
                     print("輸入格式錯誤, 請輸入兩個數字, 用空格隔開")
                     continue
-                cm.control_gimbal(controller, pitch, yaw)
+                cm.Command.GimbalControl_command(controller, pitch, yaw)
 
             elif cmd == "quit":
                 print("已退出操作")
